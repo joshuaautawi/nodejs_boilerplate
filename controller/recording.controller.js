@@ -48,13 +48,19 @@ module.exports = {
   },
   getAll: async (req, res) => {
     try {
-      const page = parseInt(req.query.page, 10) || 1; // Default to page 1 if not specified
-      const limit = parseInt(req.query.limit, 10) || 10; // Default to 10 items per page if not specified
+      const page = parseInt(req.query.page, 10) || 1;
+      const limit = parseInt(req.query.limit, 10) || 10;
       const offset = (page - 1) * limit;
+      const titleFilter = req.query.title;
 
+      let whereCondition = {};
+      if (titleFilter) {
+        whereCondition.title = { [Sequelize.Op.like]: `%${titleFilter}%` };
+      }
       const { count, rows } = await Recording.findAndCountAll({
-        limit: limit,
-        offset: offset,
+        where: whereCondition,
+        limit,
+        offset,
         include: [{ model: Artist, as: "artist" }],
       });
       return res.status(200).json({

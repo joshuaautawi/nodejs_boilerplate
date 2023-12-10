@@ -1,5 +1,5 @@
 const { Artist } = require("../models");
-
+const Sequelize = require("sequelize");
 module.exports = {
   create: async (req, res) => {
     try {
@@ -51,8 +51,15 @@ module.exports = {
       const page = parseInt(req.query.page) || 1;
       const limit = parseInt(req.query.limit) || 10;
       const offset = (page - 1) * limit;
+      const nameFilter = req.query.name;
+
+      let whereCondition = {};
+      if (nameFilter) {
+        whereCondition.firstName = { [Sequelize.Op.like]: `%${nameFilter}%` };
+      }
 
       const { count, rows } = await Artist.findAndCountAll({
+        where: whereCondition,
         limit,
         offset,
       });

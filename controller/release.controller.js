@@ -66,11 +66,18 @@ module.exports = {
   },
   getAll: async (req, res) => {
     try {
-      const page = parseInt(req.query.page, 10) || 1; // Default to page 1 if not specified
-      const pageSize = parseInt(req.query.pageSize, 10) || 10; // Default to 10 items per page if not specified
+      const page = parseInt(req.query.page, 10) || 1;
+      const pageSize = parseInt(req.query.pageSize, 10) || 10;
       const offset = (page - 1) * pageSize;
+      const titleFilter = req.query.title;
+
+      let whereCondition = {};
+      if (titleFilter) {
+        whereCondition.title = { [Sequelize.Op.like]: `%${titleFilter}%` }; // Filtering by title
+      }
 
       const releases = await Release.findAll({
+        where: whereCondition,
         limit: pageSize,
         offset: offset,
         include: [
