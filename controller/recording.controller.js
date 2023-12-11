@@ -76,4 +76,17 @@ module.exports = {
         .json({ status: "failed", message: JSON.stringify(e) });
     }
   },
+  get: async (req, res) => {
+    try {
+      const data = Recording.findAll();
+      return res.status(200).json({
+        status: "success",
+        data,
+      });
+    } catch (e) {
+      return res
+        .status(500)
+        .json({ status: "failed", message: JSON.stringify(e) });
+    }
+  },
 };

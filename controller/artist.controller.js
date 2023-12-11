@@ -77,4 +77,17 @@ module.exports = {
         .json({ status: "failed", message: JSON.stringify(e) });
     }
   },
+  get: async (req, res) => {
+    try {
+      const artists = await Artist.findAll();
+      return res.status(200).json({
+        status: "success",
+        data: artists,
+      });
+    } catch (e) {
+      return res
+        .status(500)
+        .json({ status: "failed", message: JSON.stringify(e) });
+    }
+  },
 };
